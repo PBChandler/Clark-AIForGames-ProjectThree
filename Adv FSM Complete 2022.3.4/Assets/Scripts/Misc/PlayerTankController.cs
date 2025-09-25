@@ -16,6 +16,7 @@ public class PlayerTankController : MonoBehaviour
     protected float shootRate;
     protected float elapsedTime;
 
+    private bool canShoot = true;
     void Start()
     {
         //Tank Settings
@@ -24,6 +25,17 @@ public class PlayerTankController : MonoBehaviour
         //Get the turret of the tank
         Turret = gameObject.transform.GetChild(0).transform;
         bulletSpawnPoint = Turret.GetChild(0).transform;
+    }
+
+    public void Raising(bool isRaising)
+    {
+        if (isRaising)
+        {
+            canShoot = false;
+        } else
+        {
+            canShoot = true;
+        }
     }
 
     void OnEndGame()
@@ -89,7 +101,7 @@ public class PlayerTankController : MonoBehaviour
 
     void UpdateWeapon()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && canShoot)
         {
             if (elapsedTime >= shootRate)
             {

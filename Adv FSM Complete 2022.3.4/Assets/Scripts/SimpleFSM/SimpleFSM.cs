@@ -244,7 +244,7 @@ public class SimpleFSM : FSM
         for (int i = 0; i < 3; i++)
         {
             GetComponent<Rigidbody>().AddExplosionForce(10000.0f, transform.position - new Vector3(rndX, 10.0f, rndZ), 40.0f, 10.0f);
-            GetComponent<Rigidbody>().velocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
+            GetComponent<Rigidbody>().linearVelocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
         }
 
         Destroy(gameObject, 1.5f);
