@@ -16,6 +16,7 @@ public class PlayerTankController : MonoBehaviour
     protected float shootRate;
     protected float elapsedTime;
 
+    public bool canShoot = true;
     void Start()
     {
         //Tank Settings
@@ -89,7 +90,7 @@ public class PlayerTankController : MonoBehaviour
 
     void UpdateWeapon()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButtonDown(0) && canShoot)
         {
             if (elapsedTime >= shootRate)
             {

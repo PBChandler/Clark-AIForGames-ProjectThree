@@ -116,7 +116,7 @@ public class NPCTankController : AdvancedFSM
         for (int i = 0; i < 3; i++)
         {
             rigidbody.AddExplosionForce(10000.0f, transform.position - new Vector3(rndX, 10.0f, rndZ), 40.0f, 10.0f);
-            rigidbody.velocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
+            rigidbody.linearVelocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
         }
 
         Destroy(gameObject, 1.5f);
