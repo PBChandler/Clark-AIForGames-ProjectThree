@@ -4,27 +4,35 @@ public class FlagInteraction : MonoBehaviour
 {
     private bool inZone = false;
     private Flag currentFlag;
+    public PlayerTankController player;
 
     public void SetInZone(bool value, Flag flag = null)
     {
         inZone = value;
         currentFlag = flag;
+
+        if (!inZone)
+        {
+            // player left zone → stop raising + allow shooting again
+            currentFlag?.StopRaising();
+            player.Raising(false);
+        }
     }
 
     private void Update()
     {
-        if (inZone && Input.GetKeyDown(KeyCode.E)) 
+        if (inZone && currentFlag != null)
         {
-            Debug.Log("Raising flag!");
-            currentFlag?.StartRaising();
-            // Lock player shooting
-            GetComponent<PlayerTankController>().canShoot = false;
-        }
-
-        else if (inZone)
-        {
-            // Unlock player shooting
-            GetComponent<PlayerTankController>().canShoot = true;
+            if (Input.GetKey(KeyCode.E))
+            {
+                currentFlag.StartRaising();
+                player.Raising(true); // lock shooting
+            }
+            else
+            {
+                currentFlag.StopRaising();
+                player.Raising(false); // unlock shooting
+            }
         }
     }
 }
