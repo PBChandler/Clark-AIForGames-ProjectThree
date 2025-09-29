@@ -25,7 +25,8 @@ public abstract class FSMState
     protected Transform[] waypoints;
     protected float curRotSpeed;
     protected float curSpeed;
-
+    public GameObject healCamp;
+    protected int Health;
     public void AddTransition(Transition transition, FSMStateID id)
     {
         // Check if anyone of the args is invallid

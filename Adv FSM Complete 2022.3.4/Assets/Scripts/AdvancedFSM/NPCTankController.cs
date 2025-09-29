@@ -5,9 +5,9 @@ using System.Collections.Generic;
 public class NPCTankController : AdvancedFSM
 {
     public GameObject Bullet;
-    private int health;
+    public int health, criticalHealth;
     new private Rigidbody rigidbody;
-
+    public GameObject healCamp;
     [System.Serializable]
     public struct StateColor
     {
@@ -35,6 +35,7 @@ public class NPCTankController : AdvancedFSM
     protected override void Initialize()
     {
         health = 100;
+        criticalHealth = 60;
         elapsedTime = 0.0f;
         shootRate = 2.0f;
 
@@ -94,24 +95,34 @@ public class NPCTankController : AdvancedFSM
         PatrolState patrol = new PatrolState(waypoints);
         patrol.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
         patrol.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        patrol.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
         chase.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
         chase.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        chase.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
 
         AttackState attack = new AttackState(waypoints);
         attack.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
         attack.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
         attack.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        attack.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
 
         DeadState dead = new DeadState();
         dead.AddTransition(Transition.NoHealth, FSMStateID.Dead);
+        dead.AddTransition(Transition.BelowCritHealth, FSMStateID.Dead);
+        HealState heal = new HealState(waypoints);
+        heal.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
+        heal.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
+        heal.variableTracker = this;
+        heal.healCamp = healCamp;
 
         AddFSMState(patrol);
         AddFSMState(chase);
         AddFSMState(attack);
         AddFSMState(dead);
+        AddFSMState(heal);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -124,6 +135,11 @@ public class NPCTankController : AdvancedFSM
                 Debug.Log("Switch to Dead State");
                 SetTransition(Transition.NoHealth);
                 Explode();
+            }
+            if(health <= criticalHealth)
+            {
+                Debug.Log("Switch to Heal State");
+                SetTransition(Transition.BelowCritHealth);
             }
         }
     }

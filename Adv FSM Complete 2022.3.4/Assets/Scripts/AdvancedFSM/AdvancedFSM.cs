@@ -17,6 +17,7 @@ public enum Transition
     ReachPlayer,
     LostPlayer,
     NoHealth,
+    BelowCritHealth,
 }
 
 public enum FSMStateID
@@ -26,6 +27,7 @@ public enum FSMStateID
     Chasing,
     Attacking,
     Dead,
+    Healing
 }
 
 public class AdvancedFSM : FSM 
