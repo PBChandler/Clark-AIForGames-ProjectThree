@@ -1,45 +1,64 @@
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
-public class NPCTankController : AdvancedFSM 
+public class NPCTankController : AdvancedFSM
 {
     public GameObject Bullet;
     private int health;
-
-    // We overwrite the deprecated built-in `rigidbody` variable.
     new private Rigidbody rigidbody;
 
-    //Initialize the Finite state machine for the NPC tank
+    [System.Serializable]
+    public struct StateColor
+    {
+        public FSMStateID state;
+        public Color color;
+    }
+
+    public StateColor[] stateColors;
+    private Dictionary<FSMStateID, Color> _colorMap;
+    private Renderer _renderer;
+    private MaterialPropertyBlock _propBlock;
+    private FSMStateID _curState;
+
+    public FSMStateID CurState
+    {
+        get { return _curState; }
+        set
+        {
+            if (_curState == value) return;
+            _curState = value;
+            UpdateStateColor();
+        }
+    }
+
     protected override void Initialize()
     {
         health = 100;
-
         elapsedTime = 0.0f;
         shootRate = 2.0f;
 
-        //Get the target enemy(Player)
         GameObject objPlayer = GameObject.FindGameObjectWithTag("Player");
         playerTransform = objPlayer.transform;
-
-        //Get the rigidbody
         rigidbody = GetComponent<Rigidbody>();
-
         if (!playerTransform)
             print("Player doesn't exist.. Please add one with Tag named 'Player'");
 
-        //Get the turret of the tank
         turret = gameObject.transform.GetChild(0).transform;
         bulletSpawnPoint = turret.GetChild(0).transform;
 
-        //Start Doing the Finite State Machine
+        _propBlock = new MaterialPropertyBlock();
+        _renderer = GetComponent<Renderer>();
+        _colorMap = new Dictionary<FSMStateID, Color>();
+        foreach (var stateColor in stateColors) _colorMap[stateColor.state] = stateColor.color;
+
         ConstructFSM();
     }
 
-    //Update each frame
     protected override void FSMUpdate()
     {
-        //Check for health
         elapsedTime += Time.deltaTime;
+        CurState = CurrentState.ID;
     }
 
     protected override void FSMFixedUpdate()
@@ -48,19 +67,25 @@ public class NPCTankController : AdvancedFSM
         CurrentState.Act(playerTransform, transform);
     }
 
-    public void SetTransition(Transition t) 
-    { 
-        PerformTransition(t); 
+    private void UpdateStateColor()
+    {
+        if (_renderer == null || !_colorMap.ContainsKey(CurState)) return;
+        _renderer.GetPropertyBlock(_propBlock);
+        _propBlock.SetColor("_Color", _colorMap[CurState]);
+        _renderer.SetPropertyBlock(_propBlock);
+    }
+
+    public void SetTransition(Transition t)
+    {
+        PerformTransition(t);
     }
 
     private void ConstructFSM()
     {
-        //Get the list of points
         pointList = GameObject.FindGameObjectsWithTag("WandarPoint");
-
         Transform[] waypoints = new Transform[pointList.Length];
         int i = 0;
-        foreach(GameObject obj in pointList)
+        foreach (GameObject obj in pointList)
         {
             waypoints[i] = obj.transform;
             i++;
@@ -89,17 +114,11 @@ public class NPCTankController : AdvancedFSM
         AddFSMState(dead);
     }
 
-    /// <summary>
-    /// Check the collision with the bullet
-    /// </summary>
-    /// <param name="collision"></param>
     void OnCollisionEnter(Collision collision)
     {
-        //Reduce health
         if (collision.gameObject.tag == "Bullet")
         {
             health -= 50;
-
             if (health <= 0)
             {
                 Debug.Log("Switch to Dead State");
@@ -118,13 +137,9 @@ public class NPCTankController : AdvancedFSM
             rigidbody.AddExplosionForce(10000.0f, transform.position - new Vector3(rndX, 10.0f, rndZ), 40.0f, 10.0f);
             rigidbody.linearVelocity = transform.TransformDirection(new Vector3(rndX, 20.0f, rndZ));
         }
-
         Destroy(gameObject, 1.5f);
     }
 
-    /// <summary>
-    /// Shoot the bullet from the turret
-    /// </summary>
     public void ShootBullet()
     {
         if (elapsedTime >= shootRate)
