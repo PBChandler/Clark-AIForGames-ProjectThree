@@ -1,13 +1,27 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.UI;
 public class NPCTankController : AdvancedFSM
 {
     public GameObject Bullet;
-    public int health, criticalHealth;
+    public int health
+    {
+        get
+        {
+            return _health;
+        }
+        set
+        {
+            _health = value;
+            healthFillBar.fillAmount = (float)health / (float)100;
+        }
+    }
+    public int criticalHealth;
+    private int _health;
     new private Rigidbody rigidbody;
     public GameObject healCamp;
+    public Image healthFillBar;
     [System.Serializable]
     public struct StateColor
     {
