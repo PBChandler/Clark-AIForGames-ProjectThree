@@ -16,18 +16,11 @@ public class HealState : FSMState
         FindNextPoint();
     }
     float healthUp;
+    float timeElapsed;
     public override void Reason(Transform player, Transform npc)
     {
-        //Set the target position as the player position
-        if (healthUp % 2 == 0)
-        {
-            destPos = healCamp.transform.position + npc.transform.right;
-        }
-        else
-        {
-            destPos = healCamp.transform.position - npc.transform.right;
-        }
         
+      
 
         //Check the distance with player tank
         //When the distance is near, transition to attack state
@@ -54,12 +47,23 @@ public class HealState : FSMState
     {
         //Rotate to the target point
         destPos = healCamp.transform.position;
-
+        //Zig, but also Zag
+        
         Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
         npc.rotation = Quaternion.Slerp(npc.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
         //Go Forward
-        npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);
+        if ((int)timeElapsed % 2 == 0)
+        {
+            npc.Translate((Vector3.forward + Vector3.right) * Time.deltaTime * curSpeed);
+        }
+        else
+        {
+            npc.Translate((Vector3.forward - Vector3.right) * Time.deltaTime * curSpeed);
+        }
+        
+        timeElapsed += Time.deltaTime;
+        
     }
 
    

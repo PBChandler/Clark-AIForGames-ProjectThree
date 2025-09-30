@@ -116,6 +116,7 @@ public abstract class FSMState
         int rndIndex = Random.Range(0, waypoints.Length);
         Vector3 rndPosition = Vector3.zero;
         destPos = waypoints[rndIndex].position + rndPosition;
+        destPos = new Vector3(Mathf.Clamp(destPos.x, -1000, 1000), 0, Mathf.Clamp(destPos.z, -1000, 1000));
     }
 
     /// <summary>
