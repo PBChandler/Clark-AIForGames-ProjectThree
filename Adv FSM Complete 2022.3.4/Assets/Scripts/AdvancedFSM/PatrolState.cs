@@ -6,6 +6,10 @@ using UnityEngine;using System.Collections;public class PatrolState : FSMStat
             //2. Since the distance is near, transition to chase state
             Debug.Log("Switch to Chase State");
             npc.GetComponent<NPCTankController>().SetTransition(Transition.SawPlayer);
+        }        int rareNumber = Random.Range(0, 1000); // 0.01% chance per Reason() call
+        if (rareNumber == 777)
+        {
+            npc.GetComponent<NPCTankController>().SetTransition(Transition.NinjaCamp); 
         }    }    public override void Act(Transform player, Transform npc)    {
         //1. Find another random patrol point if the current point is reached
         if (Vector3.Distance(npc.position, destPos) <= 100.0f)
