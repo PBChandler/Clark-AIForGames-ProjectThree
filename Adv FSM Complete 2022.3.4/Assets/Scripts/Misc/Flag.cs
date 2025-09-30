@@ -7,6 +7,10 @@ public class Flag : MonoBehaviour
     [SerializeField] private float raiseSpeed = 5f;
     [SerializeField] private float startHeight = 8f;
 
+
+    public bool IsBeingRaised { get; private set; }
+    public bool IsFullMast { get; private set; }
+
     private bool raising = false;
 
     public event Action OnFullMast;  
@@ -17,6 +21,18 @@ public class Flag : MonoBehaviour
         Vector3 pos = transform.position;
         pos.y = startHeight;
         transform.position = pos;
+    }
+
+    public void StartRaising()
+    {
+        raising = true;
+        IsBeingRaised = true;
+    }
+
+    public void StopRaising()
+    {
+        raising = false;
+        IsBeingRaised = false;
     }
 
     private void Update()
@@ -30,18 +46,11 @@ public class Flag : MonoBehaviour
             if (Mathf.Approximately(pos.y, raiseHeight))
             {
                 raising = false;
-                OnFullMast?.Invoke(); 
+                IsBeingRaised = false;
+                IsFullMast = true;
+                OnFullMast?.Invoke();
             }
         }
     }
 
-    public void StartRaising()
-    {
-        raising = true;
-    }
-
-    public void StopRaising()
-    {
-        raising = false;
-    }
 }
