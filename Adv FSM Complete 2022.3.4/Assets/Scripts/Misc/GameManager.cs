@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour
         gameWon = true;
         Debug.Log("All flags raised! YOU WIN!");
 
-        Time.timeScale = 0f;
         uiManager?.ShowWinScreen();
     }
 
