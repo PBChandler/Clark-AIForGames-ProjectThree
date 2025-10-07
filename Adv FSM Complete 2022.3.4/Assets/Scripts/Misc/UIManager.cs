@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
@@ -21,8 +22,19 @@ public class UIManager : MonoBehaviour
             StartCoroutine(PlayTypewriterEffect(missionInstructions));
         }
 
-        if (winScreen != null) winScreen.alpha = 0;
-        if (lossScreen != null) lossScreen.alpha = 0;
+        InitCanvasGroup(winScreen);
+        InitCanvasGroup(lossScreen);
+    }
+
+    private void InitCanvasGroup(CanvasGroup cg)
+    {
+        if (cg != null)
+        {
+            cg.alpha = 0f;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+            cg.gameObject.SetActive(false);
+        }
     }
 
     private IEnumerator PlayTypewriterEffect(string text)
@@ -35,21 +47,29 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    public void ShowWinScreen()
+    public void ShowWinScreen() => ShowCanvasGroup(winScreen);
+    public void ShowLossScreen() => ShowCanvasGroup(lossScreen);
+    public void HideWinScreen() => HideCanvasGroup(winScreen);
+    public void HideLossScreen() => HideCanvasGroup(lossScreen);
+
+    private void ShowCanvasGroup(CanvasGroup cg)
     {
-        if (winScreen != null)
+        if (cg != null)
         {
-            winScreen.gameObject.SetActive(true);
-            StartCoroutine(FadeCanvasGroup(winScreen, 0, 1, fadeDuration));
+            cg.gameObject.SetActive(true);
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+            StartCoroutine(FadeCanvasGroup(cg, 0, 1, fadeDuration));
         }
     }
 
-    public void ShowLossScreen()
+    private void HideCanvasGroup(CanvasGroup cg)
     {
-        if (lossScreen != null)
+        if (cg != null)
         {
-            lossScreen.gameObject.SetActive(true);
-            StartCoroutine(FadeCanvasGroup(lossScreen, 0, 1, fadeDuration));
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+            StartCoroutine(FadeOutAndDisable(cg, fadeDuration));
         }
     }
 
@@ -67,4 +87,16 @@ public class UIManager : MonoBehaviour
 
         cg.alpha = to;
     }
+
+    private IEnumerator FadeOutAndDisable(CanvasGroup cg, float duration)
+    {
+        yield return FadeCanvasGroup(cg, cg.alpha, 0, duration);
+        cg.gameObject.SetActive(false);
+    }
+
+    public void RestartGame()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
 }

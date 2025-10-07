@@ -37,7 +37,7 @@ public class Flag : MonoBehaviour
 
     private void Update()
     {
-        if (raising)
+        if (raising && !IsFullMast)
         {
             Vector3 pos = transform.position;
             pos.y = Mathf.MoveTowards(pos.y, raiseHeight, raiseSpeed * Time.deltaTime);
