@@ -19,6 +19,7 @@ public enum Transition
     NoHealth,
     BelowCritHealth,
     NinjaCamp,
+    Random,
 }
 
 public enum FSMStateID
@@ -29,7 +30,8 @@ public enum FSMStateID
     Attacking,
     Dead,
     Healing,
-    Ninja
+    Ninja,
+    OffDuty
 }
 
 public class AdvancedFSM : FSM 

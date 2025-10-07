@@ -10,6 +10,9 @@ using UnityEngine;using System.Collections;public class PatrolState : FSMStat
         if (rareNumber == 777)
         {
             npc.GetComponent<NPCTankController>().SetTransition(Transition.NinjaCamp); 
+        }        int rarerNumber = Random.Range(0, 10000);        if(rarerNumber < 300)
+        {
+            npc.GetComponent<NPCTankController>().SetTransition(Transition.Random);
         }    }    public override void Act(Transform player, Transform npc)    {
         //1. Find another random patrol point if the current point is reached
         if (Vector3.Distance(npc.position, destPos) <= 100.0f)

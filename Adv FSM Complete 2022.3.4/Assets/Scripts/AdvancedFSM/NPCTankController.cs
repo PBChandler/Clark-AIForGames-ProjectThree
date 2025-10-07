@@ -111,6 +111,7 @@ public class NPCTankController : AdvancedFSM
         patrol.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         patrol.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
         patrol.AddTransition(Transition.NinjaCamp, FSMStateID.Ninja);
+        patrol.AddTransition(Transition.Random, FSMStateID.OffDuty);
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
@@ -137,12 +138,16 @@ public class NPCTankController : AdvancedFSM
         NinjaState ninja = new NinjaState();
         ninja.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
 
+        OffDutyState offDuty = new OffDutyState(waypoints);
+        offDuty.AddTransition(Transition.Random, FSMStateID.OffDuty);
+
         AddFSMState(patrol);
         AddFSMState(chase);
         AddFSMState(attack);
         AddFSMState(dead);
         AddFSMState(heal);
         AddFSMState(ninja);
+        AddFSMState(offDuty);
     }
 
     void OnCollisionEnter(Collision collision)
