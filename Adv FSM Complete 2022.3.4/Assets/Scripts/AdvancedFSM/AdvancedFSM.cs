@@ -20,6 +20,7 @@ public enum Transition
     BelowCritHealth,
     NinjaCamp,
     Random,
+    GoBackToWork,
 }
 
 public enum FSMStateID

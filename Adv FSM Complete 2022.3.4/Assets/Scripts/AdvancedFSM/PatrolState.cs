@@ -1,5 +1,5 @@
-using UnityEngine;using System.Collections;public class PatrolState : FSMState{    public PatrolState(Transform[] wp)     {         waypoints = wp;        stateID = FSMStateID.Patrolling;        curRotSpeed = 1.0f;        curSpeed = 100.0f;    }    public override void Reason(Transform player, Transform npc)    {
-
+using UnityEngine;using System.Collections;public class PatrolState : FSMState{    public float time = 0;    public float timeToGoGambling;    public PatrolState(Transform[] wp)     {         waypoints = wp;        stateID = FSMStateID.Patrolling;        time = 0;        timeToGoGambling = 2;        curRotSpeed = 1.0f;        curSpeed = 100.0f;    }    public override void Reason(Transform player, Transform npc)    {
+        time += Time.deltaTime;
         //1. Check the distance with player tank
         if (Vector3.Distance(npc.position, player.position) <= 300.0f)
         {
@@ -10,10 +10,14 @@ using UnityEngine;using System.Collections;public class PatrolState : FSMStat
         if (rareNumber == 777)
         {
             npc.GetComponent<NPCTankController>().SetTransition(Transition.NinjaCamp); 
-        }        int rarerNumber = Random.Range(0, 10000);        if(rarerNumber < 300)
+        }        if(time > timeToGoGambling && !GameManager.CheckOffDuty())
         {
             npc.GetComponent<NPCTankController>().SetTransition(Transition.Random);
-        }    }    public override void Act(Transform player, Transform npc)    {
+            GameManager.agentOffDuty = true;
+        }        //int rarerNumber = Random.Range(0, 10000);        //if(rarerNumber < 300)
+        //{
+        //    npc.GetComponent<NPCTankController>().SetTransition(Transition.Random);
+        //}    }    public override void Act(Transform player, Transform npc)    {
         //1. Find another random patrol point if the current point is reached
         if (Vector3.Distance(npc.position, destPos) <= 100.0f)
         {

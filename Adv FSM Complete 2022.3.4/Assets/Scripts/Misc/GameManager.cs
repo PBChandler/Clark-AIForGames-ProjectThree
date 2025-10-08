@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
     public Flag[] flags;
     private int raisedFlags = 0;
     private bool gameWon = false;
+    public static bool agentOffDuty = false;
 
     [SerializeField] private UIManager uiManager;
 
@@ -20,6 +21,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public static void UpdateOffDuty(bool state)
+    {
+        agentOffDuty = state;
+    }
+
+    public static bool CheckOffDuty()
+    {
+        return agentOffDuty;
+    }
     private void HandleFlagRaised()
     {
         if (gameWon) return;

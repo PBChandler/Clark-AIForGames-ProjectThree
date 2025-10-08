@@ -27,6 +27,7 @@ public abstract class FSMState
     protected float curSpeed;
     public GameObject healCamp;
     protected int Health;
+    public bool dontClampMovement = false;
     public void AddTransition(Transition transition, FSMStateID id)
     {
         // Check if anyone of the args is invallid
@@ -113,10 +114,18 @@ public abstract class FSMState
     public void FindNextPoint()
     {
         //Debug.Log("Finding next point");
-        int rndIndex = Random.Range(0, waypoints.Length);
-        Vector3 rndPosition = Vector3.zero;
-        destPos = waypoints[rndIndex].position + rndPosition;
-        destPos = new Vector3(Mathf.Clamp(destPos.x, -1000, 1000), 0, Mathf.Clamp(destPos.z, -1000, 1000));
+        if(!dontClampMovement)
+        {
+            int rndIndex = Random.Range(0, waypoints.Length);
+            Vector3 rndPosition = Vector3.zero;
+            destPos = waypoints[rndIndex].position + rndPosition;
+            destPos = new Vector3(Mathf.Clamp(destPos.x, -1000, 1000), 0, Mathf.Clamp(destPos.z, -1000, 1000));
+        }
+        else
+        {
+            
+        }
+        
     }
 
     /// <summary>
