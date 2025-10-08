@@ -149,6 +149,7 @@ public class NPCTankController : AdvancedFSM
         AddFSMState(heal);
         AddFSMState(ninja);
         AddFSMState(offDuty);
+        GameManager.AddTank(this);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -160,6 +161,7 @@ public class NPCTankController : AdvancedFSM
             {
                 Debug.Log("Switch to Dead State");
                 SetTransition(Transition.NoHealth);
+                GameManager.RemoveTank(this);
                 Explode();
             }
             if(health <= criticalHealth)

@@ -9,6 +9,7 @@ using UnityEngine;using System.Collections;public class OffDutyState : FSMSta
             GameManager.UpdateOffDuty(false);
             time = 0;
         }
+        npc.GetComponent<NPCTankController>().health = 100;
         curSpeed = 300.0f;
         dontClampMovement = true;
         destPos = new Vector3(-1000, 0, -1000);

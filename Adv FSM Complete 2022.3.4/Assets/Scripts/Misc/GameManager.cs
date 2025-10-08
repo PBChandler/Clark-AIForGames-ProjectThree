@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,6 +8,7 @@ public class GameManager : MonoBehaviour
     private int raisedFlags = 0;
     private bool gameWon = false;
     public static bool agentOffDuty = false;
+    public static List<NPCTankController> npcs = new List<NPCTankController>();
 
     [SerializeField] private UIManager uiManager;
 
@@ -21,6 +23,15 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public static void RemoveTank(NPCTankController tom)
+    {
+        npcs.Remove(tom);
+    }
+
+    public static void AddTank(NPCTankController tom)
+    {
+        npcs.Add(tom);
+    }
     public static void UpdateOffDuty(bool state)
     {
         agentOffDuty = state;
@@ -28,6 +39,10 @@ public class GameManager : MonoBehaviour
 
     public static bool CheckOffDuty()
     {
+        if(npcs.Count > 1)
+        {
+            return false;
+        }
         return agentOffDuty;
     }
     private void HandleFlagRaised()
