@@ -4,7 +4,11 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class NPCTankController : AdvancedFSM
 {
-    public GameObject Bullet;
+    public enum Senses { NULL, Sight, Touch }
+    public Senses mySense;
+    
+    public GameObject Bullet, Sauron;
+    public bool playerHit;
     public int health
     {
         get
@@ -97,6 +101,7 @@ public class NPCTankController : AdvancedFSM
 
     private void ConstructFSM()
     {
+        Sauron.SetActive(false);
         pointList = GameObject.FindGameObjectsWithTag("WandarPoint");
         Transform[] waypoints = new Transform[pointList.Length];
         int i = 0;
@@ -112,35 +117,40 @@ public class NPCTankController : AdvancedFSM
         patrol.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
         patrol.AddTransition(Transition.NinjaCamp, FSMStateID.Ninja);
         patrol.AddTransition(Transition.Random, FSMStateID.OffDuty);
+        patrol.owner = this;
 
         ChaseState chase = new ChaseState(waypoints);
         chase.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
         chase.AddTransition(Transition.ReachPlayer, FSMStateID.Attacking);
         chase.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         chase.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
+        chase.owner = this;
 
         AttackState attack = new AttackState(waypoints);
         attack.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
         attack.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
         attack.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         attack.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
+        attack.owner = this;
 
         DeadState dead = new DeadState();
         dead.AddTransition(Transition.NoHealth, FSMStateID.Dead);
         dead.AddTransition(Transition.BelowCritHealth, FSMStateID.Dead);
+        dead.owner = this;
 
         HealState heal = new HealState(waypoints);
         heal.AddTransition(Transition.BelowCritHealth, FSMStateID.Healing);
         heal.AddTransition(Transition.LostPlayer, FSMStateID.Patrolling);
         heal.variableTracker = this;
         heal.healCamp = healCamp;
-
+        heal.owner = this;
         NinjaState ninja = new NinjaState();
         ninja.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
-
+        ninja.owner = this;
         OffDutyState offDuty = new OffDutyState(waypoints);
         offDuty.AddTransition(Transition.Random, FSMStateID.OffDuty);
         offDuty.AddTransition(Transition.GoBackToWork, FSMStateID.Patrolling);
+        offDuty.owner = this;
 
         AddFSMState(patrol);
         AddFSMState(chase);
@@ -170,9 +180,13 @@ public class NPCTankController : AdvancedFSM
                 SetTransition(Transition.BelowCritHealth);
             }
         }
+        if (collision.gameObject.tag == "Player")
+        {
+            playerHit = true;
+        }
     }
 
-    protected void Explode()
+    public void Explode()
     {
         float rndX = Random.Range(10.0f, 30.0f);
         float rndZ = Random.Range(10.0f, 30.0f);
@@ -190,6 +204,16 @@ public class NPCTankController : AdvancedFSM
         {
             Instantiate(Bullet, bulletSpawnPoint.position, bulletSpawnPoint.rotation);
             elapsedTime = 0.0f;
+        }
+    }
+
+   
+
+    public void OnCollisionExit(Collision collision)
+    {
+        if(collision.gameObject.tag == "Player")
+        {
+            playerHit = false;
         }
     }
 }

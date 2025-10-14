@@ -28,6 +28,8 @@ public abstract class FSMState
     public GameObject healCamp;
     protected int Health;
     public bool dontClampMovement = false;
+
+    public NPCTankController owner;
     public void AddTransition(Transition transition, FSMStateID id)
     {
         // Check if anyone of the args is invallid
