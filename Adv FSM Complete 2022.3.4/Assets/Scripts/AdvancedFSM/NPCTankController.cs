@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 public class NPCTankController : AdvancedFSM
 {
+    public SoundManager SoundManager;
     public enum Senses { NULL, Sight, Touch }
     public Senses mySense;
     
@@ -52,7 +53,7 @@ public class NPCTankController : AdvancedFSM
 
     protected override void Initialize()
     {
-        health = 100;
+        health = 200;
         criticalHealth = 60;
         elapsedTime = 0.0f;
         shootRate = 2.0f;
@@ -71,9 +72,44 @@ public class NPCTankController : AdvancedFSM
         _colorMap = new Dictionary<FSMStateID, Color>();
         foreach (var stateColor in stateColors) _colorMap[stateColor.state] = stateColor.color;
 
+        if(SoundManager != null)
+        {
+            SoundManager.dg_Publisher += RespondToSound;
+        }
         ConstructFSM();
     }
 
+    public void OnDestroy()
+    {
+        if (SoundManager != null)
+        {
+            SoundManager.dg_Publisher -= RespondToSound;
+        }
+    }
+    bool tempSoundFiringDelay = false;
+    public void RespondToSound(SoundManager.SoundResult sr)
+    {
+        switch (sr.tag)
+        {
+            case "PlayerMoving":
+                if (!tempSoundFiringDelay)
+                {
+                    Quaternion targetRotation = Quaternion.LookRotation(sr.location - transform.position);
+                    Instantiate(Bullet, bulletSpawnPoint.position, targetRotation);
+                    tempSoundFiringDelay = true;
+                    Invoke("tempEndDelay", 0.1f);
+                }
+                break;
+            default:
+                break;
+        }
+        
+    }
+
+    public void tempEndDelay()
+    {
+        tempSoundFiringDelay = false;
+    }
     protected override void FSMUpdate()
     {
         elapsedTime += Time.deltaTime;
