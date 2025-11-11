@@ -9,11 +9,15 @@ public class GameManager : MonoBehaviour
     private bool gameWon = false;
     public static bool agentOffDuty = false;
     public static List<NPCTankController> npcs = new List<NPCTankController>();
+    public static GameManager instance;
+    public Transform playerReference;
 
     [SerializeField] private UIManager uiManager;
 
     void Start()
     {
+        
+        instance = this;
         Physics.gravity = new Vector3(0, -500.0f, 0);
         Time.timeScale = gameSpeed;
 

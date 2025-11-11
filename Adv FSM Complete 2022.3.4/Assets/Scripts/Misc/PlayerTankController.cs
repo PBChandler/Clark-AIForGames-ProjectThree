@@ -12,6 +12,8 @@ public class PlayerTankController : MonoBehaviour
     private float maxForwardSpeed = 300.0f;
     private float maxBackwardSpeed = -300.0f;
 
+    public GameObject teleportSpot;
+
     //Bullet shooting rate
     protected float shootRate;
     protected float elapsedTime;
@@ -48,6 +50,10 @@ public class PlayerTankController : MonoBehaviour
     {
         UpdateControl();
         UpdateWeapon();
+        if(Input.GetKeyDown(KeyCode.F))
+        {
+            transform.position = teleportSpot.transform.position;
+        }
     }
     
     void UpdateControl()

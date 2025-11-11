@@ -30,7 +30,8 @@ public class ChaseState : FSMState
             npc.GetComponent<NPCTankController>().SetTransition(Transition.ReachPlayer);
         }
         //Go back to patrol is it become too far
-        else if (dist >= 300.0f)
+        //multiplied by 100 for testing sake
+        else if (dist >= 30044.0f)
         {
             Debug.Log("Switch to Patrol state");
             npc.GetComponent<NPCTankController>().SetTransition(Transition.LostPlayer);
@@ -40,7 +41,7 @@ public class ChaseState : FSMState
     public override void Act(Transform player, Transform npc)
     {
         //Rotate to the target point
-        destPos = player.position;
+        destPos = GameManager.instance.playerReference.transform.position;
 
         NavMeshAgent defaultAgent = npc.GetComponent<NavMeshAgent>(); // navmesh movement
         defaultAgent.destination = destPos;
