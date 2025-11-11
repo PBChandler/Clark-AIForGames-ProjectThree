@@ -1,4 +1,4 @@
-using UnityEngine;using System.Collections;public class PatrolState : FSMState{    public float time = 0;    public float timeToGoGambling;    public PatrolState(Transform[] wp)     {         waypoints = wp;        stateID = FSMStateID.Patrolling;        time = 0;        timeToGoGambling = 2;        curRotSpeed = 1.0f;        curSpeed = 100.0f;    }    public override void Reason(Transform player, Transform npc)    {
+using UnityEngine;using System.Collections;using UnityEngine.AI;public class PatrolState : FSMState{    public float time = 0;    public float timeToGoGambling;    public PatrolState(Transform[] wp)     {         waypoints = wp;        stateID = FSMStateID.Patrolling;        time = 0;        timeToGoGambling = 2;        curRotSpeed = 1.0f;        curSpeed = 100.0f;    }    public override void Reason(Transform player, Transform npc)    {
         time += Time.deltaTime;
         //1. Check the distance with player tank
         if (Vector3.Distance(npc.position, player.position) <= 300.0f)
@@ -25,9 +25,16 @@ using UnityEngine;using System.Collections;public class PatrolState : FSMStat
             FindNextPoint();
         }
 
+        NavMeshAgent defaultAgent = npc.GetComponent<NavMeshAgent>(); // navmesh movement
+        defaultAgent.destination = destPos;
+        Debug.Log("should be patrollin' and movin'");
+
+        /*
+
         //2. Rotate to the target point
         Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
         npc.rotation = Quaternion.Slerp(npc.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
         //3. Go Forward
-        npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);    }}
+        npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);        */
+    }}

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class ChaseState : FSMState
 {
@@ -41,10 +42,15 @@ public class ChaseState : FSMState
         //Rotate to the target point
         destPos = player.position;
 
+        NavMeshAgent defaultAgent = npc.GetComponent<NavMeshAgent>(); // navmesh movement
+        defaultAgent.destination = destPos;
+
+        /*
         Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
         npc.rotation = Quaternion.Slerp(npc.rotation, targetRotation, Time.deltaTime * curRotSpeed);
 
         //Go Forward
         npc.Translate(Vector3.forward * Time.deltaTime * curSpeed);
+        */
     }
 }

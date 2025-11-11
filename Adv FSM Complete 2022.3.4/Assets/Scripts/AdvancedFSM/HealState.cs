@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.AI;
 
 public class HealState : FSMState
 {
@@ -47,6 +48,11 @@ public class HealState : FSMState
     {
         //Rotate to the target point
         destPos = healCamp.transform.position;
+
+        NavMeshAgent defaultAgent = npc.GetComponent<NavMeshAgent>(); // navmesh movement
+        defaultAgent.destination = destPos;
+
+        /*
         //Zig, but also Zag
         
         Quaternion targetRotation = Quaternion.LookRotation(destPos - npc.position);
@@ -63,8 +69,9 @@ public class HealState : FSMState
         }
         
         timeElapsed += Time.deltaTime;
-        
+        */
+
     }
 
-   
+
 }
