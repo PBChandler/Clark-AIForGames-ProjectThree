@@ -11,7 +11,7 @@ using UnityEngine;using System.Collections;using UnityEngine.AI;public class
         }
         npc.GetComponent<NPCTankController>().health = 100;
         curSpeed = 300.0f;
-        dontClampMovement = true;
+        //dontClampMovement = true;
         destPos = new Vector3(-1000, 0, -1000);
 
         NavMeshAgent defaultAgent = npc.GetComponent<NavMeshAgent>(); // navmesh movement
