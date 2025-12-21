@@ -137,8 +137,9 @@ public class NPCTankController : AdvancedFSM
 
         NinjaState ninja = new NinjaState();
         ninja.AddTransition(Transition.SawPlayer, FSMStateID.Chasing);
+        ninja.AddTransition(Transition.Random, FSMStateID.OffDuty);
 
-        OffDutyState offDuty = new OffDutyState(waypoints);
+        OffDutyStateNew offDuty = new OffDutyStateNew(waypoints);
         offDuty.AddTransition(Transition.Random, FSMStateID.OffDuty);
         offDuty.AddTransition(Transition.GoBackToWork, FSMStateID.Patrolling);
 
